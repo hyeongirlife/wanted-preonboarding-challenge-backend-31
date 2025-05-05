@@ -19,12 +19,12 @@ export class ProductsService {
         slug: createProductDto.slug,
         short_description: createProductDto.shortDescription,
         full_description: createProductDto.fullDescription,
-        seller_id: createProductDto.sellerId,
-        brand_id: createProductDto.brandId,
+        seller_id: BigInt(createProductDto.sellerId),
+        brand_id: BigInt(createProductDto.brandId),
         status: createProductDto.status,
         categories: {
           connect: createProductDto.categories.map((category) => ({
-            id: category.category_id,
+            id: BigInt(category.category_id),
           })),
         },
       },
@@ -64,8 +64,6 @@ export class ProductsService {
     }
 
     if (category && category.length > 0) {
-      console.log('category', category);
-      // const categoryIds = category.map((id) => BigInt(id));
       where.categories = {
         some: {
           category_id: {
@@ -161,8 +159,8 @@ export class ProductsService {
     };
   }
 
-  findOne(id: string) {
-    const product = this.prisma.products.findUnique({
+  async findOne(id: string) {
+    const product = await this.prisma.products.findUnique({
       where: {
         id: BigInt(id),
       },
@@ -228,7 +226,7 @@ export class ProductsService {
   }
 
   async remove(id: string) {
-    const product = this.prisma.products.findUnique({
+    const product = await this.prisma.products.findUnique({
       where: { id: BigInt(id) },
     });
 
@@ -236,7 +234,7 @@ export class ProductsService {
       throw new NotFoundException('🔴 존재하지 않는 상품입니다.');
     }
 
-    this.prisma.products.delete({
+    await this.prisma.products.delete({
       where: { id: BigInt(id) },
     });
 
@@ -357,7 +355,7 @@ export class ProductsService {
     const review = await this.prisma.reviews.create({
       data: {
         product_id: BigInt(productId),
-        user_id: dto.userId,
+        user_id: BigInt(dto.userId),
         rating: dto.rating,
         title: dto.title,
         content: dto.content,

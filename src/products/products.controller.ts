@@ -23,11 +23,22 @@ export class ProductsController {
   constructor(private readonly productsService: ProductsService) {}
 
   @Post()
+  @ApiOperation({
+    summary: '상품 생성',
+    description: '새로운 상품을 생성합니다.',
+  })
+  @ApiBody({ type: CreateProductDto })
+  @ApiResponse({ status: 201, description: '상품 생성 성공' })
   create(@Body() createProductDto: CreateProductDto) {
     return this.productsService.create(createProductDto);
   }
 
   @Get()
+  @ApiOperation({
+    summary: '상품 목록 조회',
+    description: '페이지네이션과 필터링을 이용해 상품 목록을 조회합니다.',
+  })
+  @ApiResponse({ status: 200, description: '상품 목록 조회 성공' })
   findAll(@Query() paginationQuery: PaginationQueryDto) {
     return this.productsService.findAll(paginationQuery);
   }

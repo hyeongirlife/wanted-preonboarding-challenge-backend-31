@@ -34,18 +34,20 @@ export class MainService {
       },
     });
 
-    // 3. 주요 카테고리 (level 1, 상품 수 포함)
-    let categories = await this.prisma.categories.findMany({
+    const categories = await this.prisma.categories.findMany({
       where: { level: 1 },
       include: {
-        products: true,
+        _count: {
+          select: { products: true },
+        },
       },
+      orderBy: {
+        products: {
+          _count: 'desc',
+        },
+      },
+      take: 10,
     });
-
-    // 상품 수 기준 내림차순 정렬 후 상위 10개만
-    categories = categories
-      .sort((a, b) => b.products.length - a.products.length)
-      .slice(0, 10);
 
     // 데이터 가공
     const mapProduct = (p: any) => ({
@@ -106,7 +108,7 @@ export class MainService {
           name: c.name,
           slug: c.slug,
           image_url: c.image_url,
-          product_count: c.products.length,
+          product_count: c._count.products,
         })),
       },
       message: '메인 페이지 상품 목록을 성공적으로 조회했습니다.',

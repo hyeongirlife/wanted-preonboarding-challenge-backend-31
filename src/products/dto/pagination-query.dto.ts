@@ -6,6 +6,9 @@ import {
   IsBoolean,
   IsArray,
   Matches,
+  Max,
+  ValidateIf,
+  ValidateBy,
 } from 'class-validator';
 import { Transform, Type } from 'class-transformer';
 import { ApiPropertyOptional } from '@nestjs/swagger';
@@ -23,6 +26,7 @@ export class PaginationQueryDto {
   @Type(() => Number)
   @IsInt()
   @Min(1)
+  @Max(100)
   perPage?: number = 10;
 
   @ApiPropertyOptional({
@@ -52,6 +56,17 @@ export class PaginationQueryDto {
   minPrice?: number;
 
   @ApiPropertyOptional({ example: 5000, description: '최대 가격' })
+  @ValidateIf((o) => o.minPrice !== undefined && o.maxPrice !== undefined)
+  @ValidateBy({
+    name: '최소 금액이 최대 금액보다 큰지 확인',
+    validator: {
+      validate: (value, args) => {
+        const obj = args.object as PaginationQueryDto;
+        return obj.maxPrice > obj.minPrice;
+      },
+      defaultMessage: () => '최대 가격은 최소 가격보다 커야 합니다.',
+    },
+  })
   @IsOptional()
   @Type(() => Number)
   @IsInt()

@@ -61,7 +61,7 @@ model products {
   short_description String?         @db.VarChar(500) @map("short_description")
   full_description  String?         @db.Text @map("full_description")
   created_at        DateTime        @default(now()) @map("created_at")
-  updated_at        DateTime        @default(now()) @map("updated_at")
+  updatedAt         DateTime        @updatedAt @map("updated_at")
   seller_id         BigInt          @map("seller_id")
   brand_id          BigInt          @map("brand_id")
   status            String          @db.VarChar(20)
@@ -194,7 +194,7 @@ model reviews {
   title            String?   @db.VarChar(255)
   content          String?   @db.Text
   created_at       DateTime  @default(now()) @map("created_at")
-  updated_at       DateTime  @default(now()) @map("updated_at")
+  updated_at       DateTime  @updatedAt @map("updated_at")
   verified_purchase Boolean  @default(false) @map("verified_purchase")
   helpful_votes    Int       @default(0) @map("helpful_votes")
   product          products   @relation(fields: [product_id], references: [id], onDelete: Cascade)

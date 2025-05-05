@@ -1,16 +1,11 @@
 import { ApiProperty } from '@nestjs/swagger';
-import {
-  IsString,
-  IsInt,
-  Min,
-  Max,
-  IsBoolean,
-  IsOptional,
-} from 'class-validator';
+import { Type } from 'class-transformer';
+import { IsString, IsInt, Min, Max, IsBoolean } from 'class-validator';
 
 export class CreateReviewDto {
   @ApiProperty({ example: 5, description: '평점(1~5)' })
   @IsInt()
+  @Type(() => Number)
   @Min(1)
   @Max(5)
   rating: number;
@@ -32,5 +27,6 @@ export class CreateReviewDto {
 
   @ApiProperty({ example: 1, description: '작성자(유저) ID' })
   @IsInt()
+  @Type(() => Number)
   userId: number;
 }
