@@ -190,16 +190,57 @@ export class ProductsService {
     return product;
   }
 
-  // update(id: string, updateProductDto: UpdateProductDto) {
-  //   const product = this.prisma.products.update({
-  //     where: { id: BigInt(id) },
-  //     data: updateProductDto,
-  //   });
+  async update(id: string, updateProductDto: UpdateProductDto) {
+    const product = await this.prisma.products.findUnique({
+      where: { id: BigInt(id) },
+    });
 
-  //   return product;
-  // }
+    if (!product) {
+      throw new NotFoundException('🔴 존재하지 않는 상품입니다.');
+    }
 
-  //   remove(id: string) {
-  //     return `This action removes a #${id} product`;
-  //   }
+    const updatedProduct = await this.prisma.products.update({
+      where: { id: BigInt(id) },
+      data: {
+        name: updateProductDto.name,
+        slug: updateProductDto.slug,
+        short_description: updateProductDto.shortDescription,
+        full_description: updateProductDto.fullDescription,
+        seller_id: updateProductDto.sellerId,
+        brand_id: updateProductDto.brandId,
+        status: updateProductDto.status,
+        categories: {
+          connect: updateProductDto.categories.map((category) => ({
+            id: category.category_id,
+          })),
+        },
+        updated_at: new Date(),
+      },
+    });
+
+    return {
+      id: updatedProduct.id,
+      name: updatedProduct.name,
+      slug: updatedProduct.slug,
+      updated_at: updatedProduct.updated_at,
+    };
+  }
+
+  async remove(id: string) {
+    const product = this.prisma.products.findUnique({
+      where: { id: BigInt(id) },
+    });
+
+    if (!product) {
+      throw new NotFoundException('🔴 존재하지 않는 상품입니다.');
+    }
+
+    this.prisma.products.delete({
+      where: { id: BigInt(id) },
+    });
+
+    return {
+      message: '상품이 삭제되었습니다.',
+    };
+  }
 }
