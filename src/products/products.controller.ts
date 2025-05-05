@@ -11,9 +11,12 @@ import {
 
 import { PaginationQueryDto } from './dto/pagination-query.dto';
 import { ProductsService } from './products.service';
-import { ApiOperation, ApiParam, ApiResponse } from '@nestjs/swagger';
+import { ApiOperation, ApiParam, ApiResponse, ApiBody } from '@nestjs/swagger';
 import { UpdateProductDto } from './dto/update-product.dto';
 import { CreateProductDto } from './dto/create-product.dto';
+import { GetProductReviewDto } from './dto/get-product-review.dto';
+import { CreateReviewDto } from './dto/create-review.dto';
+import { UpdateReviewDto } from './dto/update-review.dto';
 
 @Controller('products')
 export class ProductsController {
@@ -60,5 +63,61 @@ export class ProductsController {
   })
   remove(@Param('id') id: string) {
     return this.productsService.remove(id);
+  }
+
+  @Get(':id/reviews')
+  @ApiOperation({
+    summary: '특정 상품 리뷰 조회',
+    description: '상품 ID로 상품의 리뷰를 조회합니다.',
+  })
+  findReviews(
+    @Param('id') id: string,
+    @Query() paginationQuery: GetProductReviewDto,
+  ) {
+    return this.productsService.findReviews(id, paginationQuery);
+  }
+
+  @Post(':id/reviews')
+  @ApiOperation({
+    summary: '리뷰 작성',
+    description: '상품에 대한 리뷰를 작성합니다.',
+  })
+  @ApiParam({ name: 'id', type: String, description: '상품 ID' })
+  @ApiBody({ type: CreateReviewDto })
+  @ApiResponse({ status: 201, description: '리뷰 작성 성공' })
+  async createReview(@Param('id') id: string, @Body() dto: CreateReviewDto) {
+    return await this.productsService.createReview(id, dto);
+  }
+
+  @Put(':id/reviews/:reviewId')
+  @ApiOperation({
+    summary: '리뷰 수정',
+    description: '상품 리뷰를 수정합니다.',
+  })
+  @ApiParam({ name: 'id', type: String, description: '상품 ID' })
+  @ApiParam({ name: 'reviewId', type: String, description: '리뷰 ID' })
+  @ApiBody({ type: UpdateReviewDto })
+  @ApiResponse({ status: 200, description: '리뷰 수정 성공' })
+  async updateReview(
+    @Param('id') id: string,
+    @Param('reviewId') reviewId: string,
+    @Body() dto: UpdateReviewDto,
+  ) {
+    return await this.productsService.updateReview(id, reviewId, dto);
+  }
+
+  @Delete(':id/reviews/:reviewId')
+  @ApiOperation({
+    summary: '리뷰 삭제',
+    description: '상품 리뷰를 삭제합니다.',
+  })
+  @ApiParam({ name: 'id', type: String, description: '상품 ID' })
+  @ApiParam({ name: 'reviewId', type: String, description: '리뷰 ID' })
+  @ApiResponse({ status: 200, description: '리뷰 삭제 성공' })
+  async deleteReview(
+    @Param('id') id: string,
+    @Param('reviewId') reviewId: string,
+  ) {
+    return await this.productsService.deleteReview(id, reviewId);
   }
 }
