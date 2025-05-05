@@ -25,14 +25,13 @@ export class ProductsController {
 
   @Get()
   findAll(@Query() paginationQuery: PaginationQueryDto) {
-    console.log('🔴 paginationQuery', paginationQuery.category.length);
     return this.productsService.findAll(paginationQuery);
   }
 
-  //   @Get(':id')
-  //   findOne(@Param('id') id: string) {
-  //     return this.productsService.findOne(id);
-  //   }
+  // @Get(':id')
+  // findOne(@Param('id') id: string) {
+  //   return this.productsService.findOne(id);
+  // }
 
   //   @Patch(':id')
   //   update(@Param('id') id: string, @Body() updateProductDto: UpdateProductDto) {

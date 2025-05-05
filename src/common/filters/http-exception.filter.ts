@@ -35,14 +35,7 @@ export class HttpExceptionFilter implements ExceptionFilter {
       message = exception.message;
     }
 
-    // Log the error
-    console.error(`[${request.method}] ${request.url}`, {
-      status,
-      errorCode,
-      message,
-      details,
-      timestamp: new Date().toISOString(),
-    });
+    console.error(exception);
 
     response.status(status).json({
       success: false,
