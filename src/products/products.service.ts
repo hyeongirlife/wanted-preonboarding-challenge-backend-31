@@ -1,17 +1,34 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 // import { CreateProductDto } from './dto/create-product.dto';
 // import { UpdateProductDto } from './dto/update-product.dto';
 import { PaginationQueryDto } from './dto/pagination-query.dto';
 import { Prisma } from '@prisma/client';
 import { PrismaService } from 'src/prisma/prisma.service';
+import { UpdateProductDto } from './dto/update-product.dto';
+import { CreateProductDto } from './dto/create-product.dto';
 
 @Injectable()
 export class ProductsService {
   constructor(private readonly prisma: PrismaService) {}
 
-  //   create(createProductDto: CreateProductDto) {
-  //     return 'This action adds a new product';
-  //   }
+  create(createProductDto: CreateProductDto) {
+    return this.prisma.products.create({
+      data: {
+        name: createProductDto.name,
+        slug: createProductDto.slug,
+        short_description: createProductDto.shortDescription,
+        full_description: createProductDto.fullDescription,
+        seller_id: createProductDto.sellerId,
+        brand_id: createProductDto.brandId,
+        status: createProductDto.status,
+        categories: {
+          connect: createProductDto.categories.map((category) => ({
+            id: category.category_id,
+          })),
+        },
+      },
+    });
+  }
 
   async findAll(paginationQuery: PaginationQueryDto) {
     const {
@@ -143,13 +160,44 @@ export class ProductsService {
     };
   }
 
-  //   findOne(id: string) {
-  //     return `This action returns a #${id} product`;
-  //   }
+  findOne(id: string) {
+    const product = this.prisma.products.findUnique({
+      where: {
+        id: BigInt(id),
+      },
+      include: {
+        seller: true,
+        brand: true,
+        details: true,
+        prices: true,
+        categories: {
+          include: {
+            category: true,
+          },
+        },
+        option_groups: {
+          include: {
+            options: true,
+          },
+        },
+      },
+    });
 
-  //   update(id: string, updateProductDto: UpdateProductDto) {
-  //     return `This action updates a #${id} product`;
-  //   }
+    if (!product) {
+      throw new NotFoundException('🔴 존재하지 않는 상품입니다.');
+    }
+
+    return product;
+  }
+
+  // update(id: string, updateProductDto: UpdateProductDto) {
+  //   const product = this.prisma.products.update({
+  //     where: { id: BigInt(id) },
+  //     data: updateProductDto,
+  //   });
+
+  //   return product;
+  // }
 
   //   remove(id: string) {
   //     return `This action removes a #${id} product`;
