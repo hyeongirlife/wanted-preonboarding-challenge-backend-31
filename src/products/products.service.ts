@@ -205,14 +205,20 @@ export class ProductsService {
         slug: updateProductDto.slug,
         short_description: updateProductDto.shortDescription,
         full_description: updateProductDto.fullDescription,
-        seller_id: updateProductDto.sellerId,
-        brand_id: updateProductDto.brandId,
+        seller_id: updateProductDto.sellerId
+          ? BigInt(updateProductDto.sellerId)
+          : undefined,
+        brand_id: updateProductDto.brandId
+          ? BigInt(updateProductDto.brandId)
+          : undefined,
         status: updateProductDto.status,
-        categories: {
-          connect: updateProductDto.categories.map((category) => ({
-            id: category.category_id,
-          })),
-        },
+        categories: updateProductDto.categories
+          ? {
+              connect: updateProductDto.categories.map((category) => ({
+                id: BigInt(category.category_id),
+              })),
+            }
+          : undefined,
         updated_at: new Date(),
       },
     });

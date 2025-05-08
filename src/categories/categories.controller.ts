@@ -10,16 +10,16 @@ export class CategoriesController {
 
   @Get()
   @ApiOperation({ summary: '카테고리 목록 조회' })
-  findAll(@Query() getCategoryDto: GetCategoryDto) {
-    return this.categoriesService.findAll(getCategoryDto);
+  async findAll(@Query() getCategoryDto: GetCategoryDto) {
+    return await this.categoriesService.findAll(getCategoryDto);
   }
 
   @Get(':id/products')
   @ApiOperation({ summary: '특정 카테고리 조회' })
-  findProducts(
+  async findProducts(
     @Param('id') id: string,
     @Query() getCategoryProductDto: GetCategoryProductDto,
   ) {
-    return this.categoriesService.findProducts(id, getCategoryProductDto);
+    return await this.categoriesService.findProducts(id, getCategoryProductDto);
   }
 }

@@ -20,11 +20,13 @@ export class CategoriesService {
 
   async findProducts(id: string, getCategoryProductDto: GetCategoryProductDto) {
     const { page, perPage, sort, includeSubcategories } = getCategoryProductDto;
-    const categoryId = Number.isNaN(parseInt(id)) ? 0 : parseInt(id);
-
-    if (categoryId === 0) {
+    let categoryId: bigint;
+    try {
+      categoryId = BigInt(id);
+    } catch (error) {
       throw new BadRequestException('🔴 카테고리 ID가 유효하지 않습니다.');
     }
+
     /**
      * @comment 데이터가 적기 때문에 카테고리 조회 후 상품 조회. 그리고 페이지네이션을 주기 편리함.
      */
