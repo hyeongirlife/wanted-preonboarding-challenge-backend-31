@@ -29,8 +29,8 @@ export class ProductsController {
   })
   @ApiBody({ type: CreateProductDto })
   @ApiResponse({ status: 201, description: '상품 생성 성공' })
-  create(@Body() createProductDto: CreateProductDto) {
-    return this.productsService.create(createProductDto);
+  async create(@Body() createProductDto: CreateProductDto) {
+    return await this.productsService.create(createProductDto);
   }
 
   @Get()
@@ -39,8 +39,8 @@ export class ProductsController {
     description: '페이지네이션과 필터링을 이용해 상품 목록을 조회합니다.',
   })
   @ApiResponse({ status: 200, description: '상품 목록 조회 성공' })
-  findAll(@Query() paginationQuery: PaginationQueryDto) {
-    return this.productsService.findAll(paginationQuery);
+  async findAll(@Query() paginationQuery: PaginationQueryDto) {
+    return await this.productsService.findAll(paginationQuery);
   }
 
   @Get(':id')
@@ -51,8 +51,8 @@ export class ProductsController {
   @ApiParam({ name: 'id', type: String, description: '상품 ID' })
   @ApiResponse({ status: 200, description: '상품 조회 성공' })
   @ApiResponse({ status: 404, description: '상품을 찾을 수 없음' })
-  findOne(@Param('id') id: string) {
-    return this.productsService.findOne(id);
+  async findOne(@Param('id') id: string) {
+    return await this.productsService.findOne(id);
   }
 
   @Put(':id')
@@ -72,8 +72,8 @@ export class ProductsController {
     summary: '특정 상품 삭제',
     description: '상품 ID로 상품을 삭제합니다.',
   })
-  remove(@Param('id') id: string) {
-    return this.productsService.remove(id);
+  async remove(@Param('id') id: string) {
+    return await this.productsService.remove(id);
   }
 
   @Get(':id/reviews')

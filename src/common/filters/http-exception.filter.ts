@@ -21,14 +21,14 @@ export class HttpExceptionFilter implements ExceptionFilter {
 
     if (exception instanceof HttpException) {
       status = exception.getStatus();
-      const response = exception.getResponse() as any;
+      const exceptionResponse = exception.getResponse() as any;
 
-      if (response.error?.code) {
-        errorCode = response.error.code;
-        message = response.error.message;
-        details = response.error.details;
+      if (exceptionResponse.error?.code) {
+        errorCode = exceptionResponse.error.code;
+        message = exceptionResponse.error.message;
+        details = exceptionResponse.error.details;
       } else {
-        message = response.message || exception.message;
+        message = exceptionResponse.message || exception.message;
       }
     } else if (exception instanceof Error) {
       message = exception.message;
