@@ -8,19 +8,23 @@ import {
   Put,
   Query,
 } from '@nestjs/common';
-
-import { PaginationQueryDto } from './dto/pagination-query.dto';
+import { CommandBus } from '@nestjs/cqrs';
+import { PaginationQueryDto } from './queries/dto/pagination-query.dto';
 import { ProductsService } from './products.service';
 import { ApiOperation, ApiParam, ApiResponse, ApiBody } from '@nestjs/swagger';
-import { UpdateProductDto } from './dto/update-product.dto';
-import { CreateProductDto } from './dto/create-product.dto';
-import { GetProductReviewDto } from './dto/get-product-review.dto';
-import { CreateReviewDto } from './dto/create-review.dto';
-import { UpdateReviewDto } from './dto/update-review.dto';
+import { UpdateProductDto } from './commands/dto/update-product.dto';
+import { CreateProductDto } from './commands/dto/create-product.dto';
+import { GetProductReviewDto } from './queries/dto/get-product-review.dto';
+import { CreateReviewDto } from './commands/dto/create-review.dto';
+import { UpdateReviewDto } from './commands/dto/update-review.dto';
+import { CreateProductCommand } from './commands/create-product.command';
 
 @Controller('products')
 export class ProductsController {
-  constructor(private readonly productsService: ProductsService) {}
+  constructor(
+    private readonly productsService: ProductsService,
+    private readonly commandBus: CommandBus,
+  ) {}
 
   @Post()
   @ApiOperation({
@@ -30,7 +34,9 @@ export class ProductsController {
   @ApiBody({ type: CreateProductDto })
   @ApiResponse({ status: 201, description: '상품 생성 성공' })
   async create(@Body() createProductDto: CreateProductDto) {
-    return await this.productsService.create(createProductDto);
+    return await this.commandBus.execute(
+      new CreateProductCommand(createProductDto),
+    );
   }
 
   @Get()

@@ -248,7 +248,7 @@ export class CreateProductDto {
     type: [CategoryDto],
     example: [
       { category_id: 5, is_primary: true },
-      { category_id: 8, is_primary: false },
+      { category_id: 12, is_primary: false },
     ],
   })
   @IsArray()
